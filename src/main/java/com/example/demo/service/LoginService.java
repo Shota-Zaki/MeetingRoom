@@ -7,5 +7,8 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class LoginService {
-
+	
+	public boolean loginCheck() {
+		
+	}
 }

@@ -14,46 +14,46 @@ import lombok.RequiredArgsConstructor;
 
 @Controller
 @RequiredArgsConstructor
-public class UserController {
+public class AdminUserController {
 	private final UserMapper userMapper;
 	
-	@GetMapping("/user")
+	@GetMapping("/admin/user")
 	public String index(Model model) {
 		model.addAttribute("users",userMapper.getAllUsers());
 		return "user/list";
 	}
 	
-	@GetMapping("/detail/{id}")
+	@GetMapping("/admin/detail/{id}")
 	public String detail(@PathVariable int id,Model model) {
 		model.addAttribute("user",userMapper.getUserById(id));
 		return "user/detail";
 	}
 	
-	@GetMapping("/create")
+	@GetMapping("/admin/create")
 	public String create(@ModelAttribute User user) {
 		return "user/create";
 	}
 	
-	@PostMapping("/create")
+	@PostMapping("/admin/create")
 	public String create(@ModelAttribute User user,Model model) {
 		userMapper.insertUser(user);
 		return "user/list";
 	}
 	
-	@GetMapping("/update/{id}")
+	@GetMapping("/admin/update/{id}")
 	public String update(@PathVariable int id,Model model) {
 		model.addAttribute("user",userMapper.getUserById(id));
 		return "user/edit";
 	}
 	
-	@PostMapping("/update")
+	@PostMapping("/admin/update")
 	public String update(@ModelAttribute User user,Model model) {
 		userMapper.updateUser(user);
 		model.addAttribute("users",userMapper.getAllUsers());
 		return "user/list";
 	}
 	
-	@GetMapping("/delete/{id}")
+	@GetMapping("/admin/delete/{id}")
 	public String delete(@PathVariable int id,Model model) {
 		userMapper.deleteUserById(id);
 		model.addAttribute("users",userMapper.getAllUsers());

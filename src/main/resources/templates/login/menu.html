@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+	<form th:action="@{/reserve}" method="get">
+		<input type="submit" value="会議室予約">
+	</form>
+	
+	<form th:action="@{/cancel}" method="get">
+		<input type="submit" value="予約キャンセル">
+	</form>
+	
+	<form th:action="@{/logout}" method="get">
+		<input type="submit" value="ログアウト">
+	</form>
+
+</body>
+</html>

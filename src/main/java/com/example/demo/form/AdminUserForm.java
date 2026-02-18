@@ -3,7 +3,7 @@ package com.example.demo.form;
 import lombok.Data;
 
 @Data
-public class UserForm {
+public class AdminUserForm {
 	int id;
 
 	String name;

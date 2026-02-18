@@ -5,6 +5,12 @@
 <title>Insert title here</title>
 </head>
 <body>
+	<h1>ログイン</h1>
+	<form th:action="@{/login}" method="post" th:object="${LoginForm}">
+		ログインID:<input type="text" name="loginId">
+		パスワード:<input type="text" name="password">
+		<input type="submit" value="ログイン">
+	</form> 
 
 </body>
 </html>
