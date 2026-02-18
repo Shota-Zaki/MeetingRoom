@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html xmlns="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+	<h1>会議室予約</h1>
+	<form th:action="/date" method="post" th:object="${}">
+		<input type="date" name="date" value="">
+	</form>
+	
+	<h2>予約可能時間帯</h2>
+	<table>
+		<thead>
+			<tr th:each="room:${rooms}">
+				<th>会議室名/時間帯</th>
+				<th th:text="${room.name}"></th>
+			</tr>
+		</thead>
+		
+		<tbody>
+			<tr th:each="reserve:${reserves}">
+				<td th:text="${time}"></td>
+			</tr>
+		</tbody>
+	</table>
+</body>
+</html>

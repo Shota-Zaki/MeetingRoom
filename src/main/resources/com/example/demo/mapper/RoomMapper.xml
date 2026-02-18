@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.demo.mapper.RoomMapper">
+<select id="getAllRooms" resultType="com.example.demo.entity.Room">
+	SELECT id,loginId,password,name FROM room ORDER BY id
+</select>
+ <select id="selectAll" resultType="com.example.demo.entity.Room">
+    SELECT id, name FROM room ORDER BY id
+  </select>
+<select id="getRoomrById" resultType="com.example.demo.entity.Room">
+	SELECT id,name FROM Room WHERE id =#{id}
+</select>
+
+<insert id="insertRoom" parameterType="com.example.demo.entity.Room">
+	INSERT INTO room(id,name) VALUES(id,name)
+</insert>
+
+<update id="updateRoomr" parameterType="com.example.demo.entity.Room">
+	UPDATE room SET id=#{id},name=#{name} WHERE id=#{id}
+</update>
+
+<delete id="deleteRoomById" parameterType="com.example.demo.entity.Room">
+	DELETE FROM room WHERE id=#{id}
+</delete>
+
+</mapper>
