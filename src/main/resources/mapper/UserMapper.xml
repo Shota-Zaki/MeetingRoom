@@ -1,24 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.example.demo.mapper.UsersMapper">
+<mapper namespace="com.example.demo.mapper.UserMapper">
 <select id="getAllUsers" resultType="com.example.demo.entity.User">
-	SELECT id,loginId,password,name FROM user ORDER BY id
+	SELECT id,password,name,address,adminflag,deleteflag FROM users WHERE deleteflag = 0 ORDER BY id
 </select>
 
 <select id="getUserById" resultType="com.example.demo.entity.User">
-	SELECT id,loginId,password,name FROM user WHERE id =#{id}
+	SELECT id,password,name,address,adminflag,deleteflag FROM users
+  	WHERE id = #{id} AND deleteflag = 0
 </select>
 
 <insert id="insertUser" parameterType="com.example.demo.entity.User">
-	INSERT INTO user(id,loginId,password,name) VALUES(Null,#{loginId},#{password},#{name})
+	INSERT INTO users(id,password,name,address,adminflag,deleteflag) 
+	VALUES(#{id},#{password},#{name},#{address},#{adminflag},0)
 </insert>
 
 <update id="updateUser" parameterType="com.example.demo.entity.User">
-	UPDATE user SET loginId=#{loginId},password=#{password},name=#{name} WHERE id=#{id}
+	UPDATE users SET password=#{password},name=#{name},address=#{address},adminflag=#{adminflag} WHERE id=#{id}
 </update>
 
-<delete id="deleteUserById" parameterType="com.example.demo.entity.User">
-	DELETE FROM user WHERE id=#{id}
-</delete>
+<update id="deleteUserById" parameterType="string">
+	UPDATE users SET deleteflag = 1 WHERE id=#{id}
+</update>
 
 </mapper>

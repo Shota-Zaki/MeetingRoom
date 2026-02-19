@@ -7,7 +7,7 @@ import lombok.Data;
 public class LoginForm {
 	
 	@NotBlank(message="ログインIDを入力してください。")
-	private String loginId;
+	private String username;
 	
 	@NotBlank(message="パスワードを入力してください。")
 	private String password;

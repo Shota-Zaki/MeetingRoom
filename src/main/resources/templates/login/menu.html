@@ -5,6 +5,7 @@
 <title>Insert title here</title>
 </head>
 <body>
+	
 	<form th:action="@{/reserve}" method="get">
 		<input type="submit" value="会議室予約">
 	</form>
@@ -16,6 +17,10 @@
 	<form th:action="@{/logout}" method="get">
 		<input type="submit" value="ログアウト">
 	</form>
+	
+	<a sec:authorize="hasRole('ADMIN')" th:href="@{/admin/top}">
+  	管理者ページへ
+	</a>
 
 </body>
 </html>

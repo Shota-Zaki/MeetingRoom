@@ -1,113 +1,52 @@
-USE meetingroom;
-
--- -----------------------------------------
--- 0) 変数：今年の下2桁（YY）
--- 例：2026年なら '26'
--- -----------------------------------------
-SET @yy := DATE_FORMAT(CURDATE(), '%y');
-
--- -----------------------------------------
--- 1) マスタ投入（room）
--- -----------------------------------------
+-- -----------------------------
+-- 1) room マスタ
+-- -----------------------------
 INSERT INTO room (id, name) VALUES
 ('0201', '大会議室'),
 ('0301', '3A会議室'),
 ('0302', '3B会議室');
 
--- -----------------------------------------
--- 2) 採番初期化（user_seq）
--- その年の行が無ければ last_no=0 を作る
--- -----------------------------------------
-INSERT INTO user_seq (yy, last_no)
-VALUES (@yy, 0)
-ON DUPLICATE KEY UPDATE last_no = last_no;
+-- -----------------------------
+-- 2) users（bcrypt済みパスワード）
+-- pass123 / pass456
+-- -----------------------------
+INSERT INTO users (id, password, name, address, adminflag, deleteflag) VALUES
+('2600001', '$2b$10$Mhw7wxUQihvpRH.xGUSvNOsTGjiFKPk7khD2bMIHfRVIYmKJ7gIR.', '管理者太郎', '東京都', 1, 0),
+('2600002', '$2b$10$vwWIAmo6AhyjIhQSD2Br7uU1j2pPQRgACNpGoAD1mW2bbP6n1Nlgm', '一般花子', '大阪府', 0, 0),
+('2600003', '$2b$10$vwWIAmo6AhyjIhQSD2Br7uU1j2pPQRgACNpGoAD1mW2bbP6n1Nlgm', '一般次郎', '愛知県', 0, 0);
 
--- -----------------------------------------
--- 3) users 3人を採番で作成
--- 00001開始、年が変われば自動で別系列になる
---
--- password は既存のSHA-256 hexを流用
---  - pass123: 9b8769...
---  - pass456: 1d4598...
--- -----------------------------------------
-
--- 1人目（管理者）
-UPDATE user_seq SET last_no = last_no + 1 WHERE yy = @yy;
-INSERT INTO users (id, password, name, address, adminflag, active)
-SELECT CONCAT(@yy, LPAD(last_no, 5, '0')),
-       '9b8769a4a742959a2d0298c36fb70623f2dfacda8436237df08d8dfd5b37374c',
-       '管理者太郎',
-       '東京都',
-       1,
-       1
-FROM user_seq WHERE yy = @yy;
-
--- 2人目（一般）
-UPDATE user_seq SET last_no = last_no + 1 WHERE yy = @yy;
-INSERT INTO users (id, password, name, address, adminflag, active)
-SELECT CONCAT(@yy, LPAD(last_no, 5, '0')),
-       '1d4598d1949b47f7f211134b639ec32238ce73086a83c2f745713b3f12f817e5',
-       '一般花子',
-       '大阪府',
-       0,
-       1
-FROM user_seq WHERE yy = @yy;
-
--- 3人目（一般）
-UPDATE user_seq SET last_no = last_no + 1 WHERE yy = @yy;
-INSERT INTO users (id, password, name, address, adminflag, active)
-SELECT CONCAT(@yy, LPAD(last_no, 5, '0')),
-       '1d4598d1949b47f7f211134b639ec32238ce73086a83c2f745713b3f12f817e5',
-       '一般次郎',
-       '愛知県',
-       0,
-       1
-FROM user_seq WHERE yy = @yy;
-
--- 便宜上、作った3人のIDを変数化（以降の予約投入で使う）
-SET @u1 := CONCAT(@yy, '00001');
-SET @u2 := CONCAT(@yy, '00002');
-SET @u3 := CONCAT(@yy, '00003');
-
--- -----------------------------------------
--- 4) reservation（今日・明日で0201を満室）
--- 時間枠：09:00～17:00（開始09～16の8枠）
--- endはstart+1h固定
--- -----------------------------------------
-
--- 今日：0201 満室
+-- -----------------------------
+-- 3) reservation
+-- -----------------------------
 INSERT INTO reservation (roomId, date, start, end, userId) VALUES
-('0201', CURDATE(), '09:00', '10:00', @u1),
-('0201', CURDATE(), '10:00', '11:00', @u2),
-('0201', CURDATE(), '11:00', '12:00', @u3),
-('0201', CURDATE(), '12:00', '13:00', @u1),
-('0201', CURDATE(), '13:00', '14:00', @u2),
-('0201', CURDATE(), '14:00', '15:00', @u3),
-('0201', CURDATE(), '15:00', '16:00', @u1),
-('0201', CURDATE(), '16:00', '17:00', @u2);
+('0201', CURDATE(), '09:00', '10:00', '2600001'),
+('0201', CURDATE(), '10:00', '11:00', '2600002'),
+('0301', CURDATE(), '13:00', '14:00', '2600001');
 
--- 明日：0201 満室
-INSERT INTO reservation (roomId, date, start, end, userId) VALUES
-('0201', DATE_ADD(CURDATE(), INTERVAL 1 DAY), '09:00', '10:00', @u2),
-('0201', DATE_ADD(CURDATE(), INTERVAL 1 DAY), '10:00', '11:00', @u3),
-('0201', DATE_ADD(CURDATE(), INTERVAL 1 DAY), '11:00', '12:00', @u1),
-('0201', DATE_ADD(CURDATE(), INTERVAL 1 DAY), '12:00', '13:00', @u2),
-('0201', DATE_ADD(CURDATE(), INTERVAL 1 DAY), '13:00', '14:00', @u3),
-('0201', DATE_ADD(CURDATE(), INTERVAL 1 DAY), '14:00', '15:00', @u1),
-('0201', DATE_ADD(CURDATE(), INTERVAL 1 DAY), '15:00', '16:00', @u2),
-('0201', DATE_ADD(CURDATE(), INTERVAL 1 DAY), '16:00', '17:00', @u3);
+-- =====================================================
+-- 4) 表示確認
+-- =====================================================
 
--- 他の部屋にも少しだけ予約（画面を“現実寄り”にする）
-INSERT INTO reservation (roomId, date, start, end, userId) VALUES
-('0301', CURDATE(), '13:00', '14:00', @u1),
-('0302', DATE_ADD(CURDATE(), INTERVAL 1 DAY), '11:00', '12:00', @u2);
+-- users確認
+SELECT id, name, adminflag, deleteflag
+FROM users
+ORDER BY id;
 
--- -----------------------------------------
--- 5) 確認
--- -----------------------------------------
-SELECT id, name, adminflag, active FROM users ORDER BY id;
-SELECT * FROM room ORDER BY id;
+-- room確認
+SELECT *
+FROM room
+ORDER BY id;
 
-SELECT roomId, date, start, end, userId
-FROM reservation
-ORDER BY date, roomId, start;
+-- reservation確認（JOINして見やすくする）
+SELECT
+  r.id AS reservation_id,
+  r.date,
+  r.start,
+  r.end,
+  rm.name AS room_name,
+  u.name AS user_name
+FROM reservation r
+JOIN room rm ON r.roomId = rm.id
+JOIN users u ON r.userId = u.id
+ORDER BY r.date, r.start;
+

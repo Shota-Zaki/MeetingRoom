@@ -1,52 +1,42 @@
+-- DB作成
 DROP DATABASE IF EXISTS meetingroom;
-
-CREATE DATABASE meetingroom
-  DEFAULT CHARACTER SET utf8mb4
-  DEFAULT COLLATE utf8mb4_0900_ai_ci;
-
+CREATE DATABASE meetingroom;
 USE meetingroom;
 
+-- userテーブル
 CREATE TABLE users (
-  id         VARCHAR(7)  NOT NULL COMMENT 'YY + 5桁連番',
-  password   VARCHAR(64) NOT NULL COMMENT 'SHA-256 hex 64文字',
-  name       VARCHAR(10) NOT NULL,
-  address    VARCHAR(30),
-  adminflag  TINYINT(1)  NOT NULL DEFAULT 0 COMMENT '1=管理者,0=一般',
-  deleteflag TINYINT(1)  NOT NULL DEFAULT 0 COMMENT '0=有効,1=削除',
-  created_at DATETIME    NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  updated_at DATETIME    NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  deleted_at DATETIME    NULL,
-  PRIMARY KEY (id),
-  CHECK (adminflag IN (0,1)),
-  CHECK (deleteflag IN (0,1))
-) ENGINE=InnoDB;
+id         VARCHAR(7)   NOT NULL,
+password   VARCHAR(255) NOT NULL, -- bcrypt等のハッシュを保存
+name       VARCHAR(50)  NOT NULL,
+address    VARCHAR(255),
+adminflag  TINYINT(1)   NOT NULL DEFAULT 0, -- 0=一般,1=管理者
+deleteflag TINYINT(1)   NOT NULL DEFAULT 0, -- 0=有効,1=削除
+PRIMARY KEY (id),
+CHECK (adminflag IN (0,1)), -- flagに0,1以外が入っていないか確認
+CHECK (deleteflag IN (0,1)) -- flagに0,1以外が入っていないか確認
+);
 
-
-CREATE TABLE user_seq (
-  yy      CHAR(2) NOT NULL,
-  last_no INT     NOT NULL,
-  PRIMARY KEY (yy)
-) ENGINE=InnoDB;
-
+-- roomテーブル
 CREATE TABLE room (
-  id   CHAR(4)     NOT NULL,
-  name VARCHAR(20) NOT NULL,
-  PRIMARY KEY (id)
-) ENGINE=InnoDB;
+id	 CHAR(4)	 NOT NULL, -- 階数 + 部屋番号
+name VARCHAR(20) NOT NULL,
+PRIMARY KEY (id)
+);
 
+-- reservationテーブル
 CREATE TABLE reservation (
-  id     INT        NOT NULL AUTO_INCREMENT,
-  roomId CHAR(4)    NOT NULL,
-  date   DATE       NOT NULL,
-  start  TIME       NOT NULL,
-  end    TIME       NOT NULL,
-  userId VARCHAR(7) NOT NULL,
-  PRIMARY KEY (id),
+id     INT        NOT NULL AUTO_INCREMENT, -- 予約ID自動
+roomId CHAR(4)    NOT NULL, -- room.id
+date   DATE       NOT NULL, -- 日付
+start TIME      NOT NULL, -- 開始
+end   TIME      NOT NULL, -- 終了
+userId VARCHAR(7) NOT NULL, -- users.id
+PRIMARY KEY (id),
+FOREIGN KEY (roomId) REFERENCES room(id),
+FOREIGN KEY (userId) REFERENCES users(id),
+UNIQUE (roomId,date,start)
+);
 
-  CONSTRAINT uq_res_slot UNIQUE (roomId, date, start),
-
-  CONSTRAINT fk_res_room  FOREIGN KEY (roomId) REFERENCES room(id),
-  CONSTRAINT fk_res_users FOREIGN KEY (userId) REFERENCES users(id),
-
-  CHECK (end = ADDTIME(start, '01:00:00'))
-) ENGINE=InnoDB;
+GRANT SELECT ON meetingroom.room TO 'user'@'localhost';
+GRANT SELECT ON meetingroom.users TO 'user'@'localhost';
+GRANT SELECT,INSERT,DELETE ON meetingroom.reservation TO 'user'@'localhost';

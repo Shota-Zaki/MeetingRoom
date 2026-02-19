@@ -24,7 +24,7 @@ public class AdminUserController {
 	}
 	
 	@GetMapping("/admin/detail/{id}")
-	public String detail(@PathVariable int id,Model model) {
+	public String detail(@PathVariable String id,Model model) {
 		model.addAttribute("user",userMapper.getUserById(id));
 		return "user/detail";
 	}
@@ -41,7 +41,7 @@ public class AdminUserController {
 	}
 	
 	@GetMapping("/admin/update/{id}")
-	public String update(@PathVariable int id,Model model) {
+	public String update(@PathVariable String id,Model model) {
 		model.addAttribute("user",userMapper.getUserById(id));
 		return "user/edit";
 	}
@@ -54,7 +54,7 @@ public class AdminUserController {
 	}
 	
 	@GetMapping("/admin/delete/{id}")
-	public String delete(@PathVariable int id,Model model) {
+	public String delete(@PathVariable String id,Model model) {
 		userMapper.deleteUserById(id);
 		model.addAttribute("users",userMapper.getAllUsers());
 		return "user/list";

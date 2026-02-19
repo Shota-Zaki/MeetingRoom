@@ -27,7 +27,12 @@ public class User {
 	private String address;
 	
 	/**
-	 * 住所
+	 * 管理者権限(0=通常,1=管理者)
 	 */
-	private boolean admin;
+	private int adminflag;
+	
+	/**
+	 * デリートフラグ(論路削除 0=通常,1=削除)
+	 */
+	private int deleteflag;
 }
