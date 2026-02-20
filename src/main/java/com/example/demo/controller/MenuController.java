@@ -10,4 +10,9 @@ public class MenuController {
     public String home() {
         return "login/menu";
     }
+    
+    @GetMapping("admin/top")
+    public String admin() {
+    	return "admin/admin";
+    }
 }

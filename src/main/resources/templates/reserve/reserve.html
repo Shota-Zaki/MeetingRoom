@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html xmlns="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+	<h1>予約確認</h1>
+	<ul>
+		会議室名:<li th:text="*{room.name}"></li>
+		予約日時:<li th:text="*{reservation.date}"></li>
+		予約時間:<li th:text="*{reservation.start}"></li>
+		終了時間:<li th:text="*{reservation.end}"></li>
+	</ul>
+
+</body>
+</html>

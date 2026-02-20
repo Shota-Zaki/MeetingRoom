@@ -4,12 +4,14 @@ import lombok.Data;
 
 @Data
 public class AdminUserForm {
-	int id;
+	String id;
 
 	String name;
 	
 	String password;
 	
 	String address;
+	
+	int adminflag;
 
 }

@@ -17,46 +17,46 @@ import lombok.RequiredArgsConstructor;
 public class AdminUserController {
 	private final UserMapper userMapper;
 	
-	@GetMapping("/admin/user")
+	@GetMapping("/admin/list")
 	public String index(Model model) {
 		model.addAttribute("users",userMapper.getAllUsers());
-		return "user/list";
+		return "admin/userlist";
 	}
 	
 	@GetMapping("/admin/detail/{id}")
 	public String detail(@PathVariable String id,Model model) {
 		model.addAttribute("user",userMapper.getUserById(id));
-		return "user/detail";
+		return "admin/detail";
 	}
 	
 	@GetMapping("/admin/create")
 	public String create(@ModelAttribute User user) {
-		return "user/create";
+		return "admin/create";
 	}
 	
 	@PostMapping("/admin/create")
 	public String create(@ModelAttribute User user,Model model) {
 		userMapper.insertUser(user);
-		return "user/list";
+		return "admin/useradd";
 	}
 	
 	@GetMapping("/admin/update/{id}")
 	public String update(@PathVariable String id,Model model) {
 		model.addAttribute("user",userMapper.getUserById(id));
-		return "user/edit";
+		return "admin/userupdate";
 	}
 	
 	@PostMapping("/admin/update")
 	public String update(@ModelAttribute User user,Model model) {
 		userMapper.updateUser(user);
 		model.addAttribute("users",userMapper.getAllUsers());
-		return "user/list";
+		return "admin/userlist";
 	}
 	
 	@GetMapping("/admin/delete/{id}")
 	public String delete(@PathVariable String id,Model model) {
 		userMapper.deleteUserById(id);
 		model.addAttribute("users",userMapper.getAllUsers());
-		return "user/list";
+		return "user/userlist";
 	}
 }

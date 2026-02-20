@@ -1,10 +1,21 @@
 <!DOCTYPE html>
-<html>
+<html xmlns="http://www.thymeleaf.org">
 <head>
 <meta charset="UTF-8">
 <title>Insert title here</title>
 </head>
 <body>
+	<form th:action="@{/admin/update}" method="post" th:object="${AdminUserForm}">
+		ユーザーID:<input type="text" th:field="*{id}">
+		名前<input type="text" th:field="*{name}">
+		パスワード<input type="password" th:field="*{password}">
+		住所<input type="text" th:field="*{address}">
+		<select th:field="*{adminflag}">
+			<option value="0">一般</label>
+			<option value="1">管理者</label>
+		</select>
+		
+	</form>
 
 </body>
 </html>

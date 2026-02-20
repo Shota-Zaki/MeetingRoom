@@ -5,6 +5,10 @@
 	SELECT id,roomId,date,start,end,userId FROM reservation ORDER BY id
 </select>
 
+<select id="getAllReservationsByDate" resultType="com.example.demo.entity.Room">
+	SELECT id,roomId,date,start,end,userId FROM reservation WHERE date = #{date} ORDER BY id
+</select>
+
 <select id="getReservationById" resultType="com.example.demo.entity.Reservation">
 	SELECT id,roomId,date,start,end,userId FROM reservation WHERE id =#{id}
 </select>

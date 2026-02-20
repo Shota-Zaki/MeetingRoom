@@ -15,7 +15,7 @@ import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
-//Spring SecurityのUserクラスを継承
+//Spring SecurityのUserDetailsServiceクラスを継承
 public class DbUserDetailsService implements UserDetailsService {
 	 private final UserMapper userMapper;
 
@@ -34,11 +34,11 @@ public class DbUserDetailsService implements UserDetailsService {
 	         if (user.getDeleteflag() == 1) {
 	             throw new UsernameNotFoundException("ユーザーが存在しません");
 	        }
-
+	        // 役割を与える 
 	        String role = (user.getAdminflag() == 1) ? "ROLE_ADMIN" : "ROLE_USER";
 	       
 	        //UserをSpring Security用の形に整えて返す
-	               // DBのUser → Security用UserDetailsへ変換
+	               // DBのUser → SpringSecurity用UserDetailsへ変換
 	        return org.springframework.security.core.userdetails.User
 	        		// Spring SecurityでログインIDとして扱う値を設定
 	                .withUsername(user.getId())

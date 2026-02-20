@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+	<h1>利用者詳細</h1>
+	<ul th:object="${user}">
+		<li>ID:[[*{id}]]</li>
+		<li>氏名:[[*{name}]]</li>
+		<li>ログインID:[[*{loginId}]]</li>
+		<li>パスワード:[[*{password}]]</li>
+	</ul>
+	<a href="/">戻る</a>
+
+</body>
+</html>
