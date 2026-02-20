@@ -1,10 +1,43 @@
 <!DOCTYPE html>
-<html>
+<html xmlns="http://www.thymeleaf.org">
 <head>
 <meta charset="UTF-8">
-<title>Insert title here</title>
+<title>キャンセル入力 | 会議室予約システム</title>
+<link rel="stylesheet" th:href="@{/css/app.css}">
 </head>
 <body>
+<div th:replace="~{fragments/header :: mainHeader}"></div>
+<main class="container">
+<section class="card">
+	<h2>予約キャンセル</h2>
+	<p>自分の予約のみキャンセル可能です（過去日は対象外）。</p>
 
+	<form th:action="@{/cancel}" method="get">
+		日付: <input type="date" name="date" th:value="${targetDate}">
+		<button class="btn" type="submit">表示</button>
+	</form>
+
+	<p class="error" th:if="${errorMessage}" th:text="${errorMessage}"></p>
+
+	<table>
+		<thead>
+			<tr>
+				<th>会議室 / 時間</th>
+				<th th:each="time : ${timeSlots}" th:text="${time}"></th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr th:each="row : ${rows}">
+				<th th:text="${row.roomName}"></th>
+				<td th:each="cell : ${row.cells}">
+					<a class="dot-ok" th:if="${cell.cancellable}"
+					   th:href="@{/cancel/confirm(roomId=${cell.roomId},date=${targetDate},start=${cell.start})}">○</a>
+					<span class="dot-ng" th:unless="${cell.cancellable}">×</span>
+				</td>
+			</tr>
+		</tbody>
+	</table>
+</section>
+</main>
 </body>
 </html>

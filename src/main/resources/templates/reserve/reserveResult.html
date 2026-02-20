@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html xmlns="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>予約結果 | 会議室予約システム</title>
+<link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body>
+<div th:replace="~{fragments/header :: mainHeader}"></div>
+<main class="container">
+<section class="card">
+  <h2>予約結果</h2>
+  <p th:text="${resultMessage}"></p>
+  <div class="actions">
+    <a class="btn btn-primary" th:href="@{/reserve(date=${targetDate})}">予約入力ページに戻る</a>
+  </div>
+</section>
+</main>
+</body>
+</html>
