@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<html>
+<html xmlns="http://www.thymeleaf.org">
 <head>
 <meta charset="UTF-8">
-<title>Insert title here</title>
+<title>利用者一覧</title>
 </head>
 <body>
 	<h1>利用者一覧</h1>
@@ -21,10 +21,11 @@
 				<td th:text="${user.id}"></td>
 				<td th:text="${user.name}"></td>
 				<td><a th:href="|/admin/detail/${user.id}|">詳細</a></td>
-				<td><a th:href="|/admin//update/${user.id}|">更新</a></td>
-				<td><a th:href="|/admin//delete/${user.id}|">削除</a></td>
+				<td><a th:href="|/admin/update/${user.id}|">更新</a></td>
+				<td><a th:href="|/admin/delete/${user.id}|">削除</a></td>
 			</tr>
 		</tbody>
-
+	</table>
+	<a th:href="@{/admin/top}">管理者ページへ戻る</a>
 </body>
 </html>

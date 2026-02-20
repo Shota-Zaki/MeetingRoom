@@ -8,15 +8,15 @@ import com.example.demo.entity.Room;
 
 @Mapper
 public interface RoomMapper {
-	List<Room> getAllRooms();
-	
-	Room getRoomById(int id);
-	
-	void insertRoom(Room room);
-	
-	void updateRoom(Room room);
-	
-	void deleteRoomById(int id);
+    List<Room> getAllRooms();
 
-	List<Room> selectAll();
+    Room getRoomById(String id);
+
+    void insertRoom(Room room);
+
+    void updateRoom(Room room);
+
+    void deleteRoomById(String id);
+
+    List<Room> selectAll();
 }

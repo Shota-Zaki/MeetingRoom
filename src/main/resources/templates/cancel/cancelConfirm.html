@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html xmlns="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>キャンセル確認</title>
+</head>
+<body>
+	<h1>キャンセル確認</h1>
+	<ul>
+		<li>会議室: <span th:text="${room.name}"></span>（<span th:text="${room.id}"></span>）</li>
+		<li>利用日: <span th:text="${reservation.date}"></span></li>
+		<li>開始時刻: <span th:text="${reservation.start}"></span></li>
+		<li>終了時刻: <span th:text="${reservation.end}"></span></li>
+		<li>利用者ID: <span th:text="${reservation.userId}"></span></li>
+	</ul>
+
+	<form th:action="@{/cancel/confirm}" method="post">
+		<input type="hidden" name="reservationId" th:value="${reservation.id}">
+		<input type="hidden" name="date" th:value="${reservation.date}">
+		<input type="submit" value="キャンセル確定">
+	</form>
+
+	<a th:href="@{/cancel(date=${reservation.date})}">キャンセル一覧へ戻る</a>
+</body>
+</html>

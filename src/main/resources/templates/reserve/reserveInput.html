@@ -2,28 +2,40 @@
 <html xmlns="http://www.thymeleaf.org">
 <head>
 <meta charset="UTF-8">
-<title>Insert title here</title>
+<title>会議室予約</title>
+<style>
+	table, th, td { border: 1px solid #333; border-collapse: collapse; padding: 6px; text-align: center; }
+</style>
 </head>
 <body>
 	<h1>会議室予約</h1>
-	<form th:action="/date" method="post" th:object="${}">
-		<input type="date" name="date" value="">
+
+	<form th:action="@{/reserve}" method="get">
+		日付: <input type="date" name="date" th:value="${targetDate}">
+		<input type="submit" value="表示">
 	</form>
-	
-	<h2>予約可能時間帯</h2>
+
+	<p th:if="${errorMessage}" th:text="${errorMessage}" style="color:red;"></p>
+
 	<table>
 		<thead>
-			<tr th:each="room:${rooms}">
-				<th>会議室名/時間帯</th>
-				<th th:text="${room.name}"></th>
+			<tr>
+				<th>会議室 / 時間</th>
+				<th th:each="time : ${timeSlots}" th:text="${time}"></th>
 			</tr>
 		</thead>
-		
 		<tbody>
-			<tr th:each="reserve:${reserves}">
-				<td th:text="${time}"></td>
+			<tr th:each="row : ${rows}">
+				<th th:text="${row.roomName}"></th>
+				<td th:each="cell : ${row.cells}">
+					<a th:if="${cell.available}"
+					   th:href="@{/reserve/confirm(roomId=${cell.roomId},date=${targetDate},start=${cell.start})}">○</a>
+					<span th:unless="${cell.available}">×</span>
+				</td>
 			</tr>
 		</tbody>
 	</table>
+
+	<a th:href="@{/topPage}">メニューへ戻る</a>
 </body>
 </html>

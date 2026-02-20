@@ -2,20 +2,21 @@
 <html xmlns="http://www.thymeleaf.org">
 <head>
 <meta charset="UTF-8">
-<title>Insert title here</title>
+<title>ユーザー登録</title>
 </head>
 <body>
-	<form th:action="@{/admin/create}" method="post" th:object="${AdminUserForm}">
-		ユーザーID:<input type="text" th:field="*{id}">
-		名前<input type="text" th:field="*{name}">
-		パスワード<input type="password" th:field="*{password}">
-		住所<input type="text" th:field="*{address}">
+	<h1>ユーザー新規登録</h1>
+	<form th:action="@{/admin/create}" method="post" th:object="${user}">
+		ユーザーID:<input type="text" th:field="*{id}"><br>
+		名前:<input type="text" th:field="*{name}"><br>
+		パスワード:<input type="password" th:field="*{password}"><br>
+		住所:<input type="text" th:field="*{address}"><br>
 		<select th:field="*{adminflag}">
-			<option value="0">一般</label>
-			<option value="1">管理者</label>
-		</select>
-		
+			<option value="0">一般</option>
+			<option value="1">管理者</option>
+		</select><br>
+		<input type="submit" value="登録">
 	</form>
-
+	<a th:href="@{/admin/top}">管理者ページへ戻る</a>
 </body>
 </html>

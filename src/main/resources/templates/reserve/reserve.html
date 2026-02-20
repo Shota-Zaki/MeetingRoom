@@ -2,16 +2,28 @@
 <html xmlns="http://www.thymeleaf.org">
 <head>
 <meta charset="UTF-8">
-<title>Insert title here</title>
+<title>予約確認</title>
 </head>
 <body>
 	<h1>予約確認</h1>
 	<ul>
-		会議室名:<li th:text="*{room.name}"></li>
-		予約日時:<li th:text="*{reservation.date}"></li>
-		予約時間:<li th:text="*{reservation.start}"></li>
-		終了時間:<li th:text="*{reservation.end}"></li>
+		<li>会議室: <span th:text="${room.name}"></span>（<span th:text="${room.id}"></span>）</li>
+		<li>利用日: <span th:text="${reservation.date}"></span></li>
+		<li>開始時刻: <span th:text="${reservation.start}"></span></li>
+		<li>終了時刻: <span th:text="${reservation.end}"></span></li>
+		<li>利用者ID: <span th:text="${user.id}"></span></li>
+		<li>利用者名: <span th:text="${user.name}"></span></li>
 	</ul>
 
+	<form th:action="@{/reserve/confirm}" method="post" th:object="${reservation}">
+		<input type="hidden" th:field="*{roomId}">
+		<input type="hidden" th:field="*{date}">
+		<input type="hidden" th:field="*{start}">
+		<input type="hidden" th:field="*{end}">
+		<input type="hidden" th:field="*{userId}">
+		<input type="submit" value="確定">
+	</form>
+
+	<a th:href="@{/reserve(date=${reservation.date})}">予約一覧へ戻る</a>
 </body>
 </html>
