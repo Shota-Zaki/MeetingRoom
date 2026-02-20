@@ -2,20 +2,20 @@
 <html xmlns="http://www.thymeleaf.org">
 <head>
 <meta charset="UTF-8">
-<title>会議室予約</title>
-<style>
-	table, th, td { border: 1px solid #333; border-collapse: collapse; padding: 6px; text-align: center; }
-</style>
+<title>予約入力 | 会議室予約システム</title>
+<link rel="stylesheet" th:href="@{/css/app.css}">
 </head>
 <body>
-	<h1>会議室予約</h1>
-
+<div th:replace="~{fragments/header :: mainHeader}"></div>
+<main class="container">
+<section class="card">
+	<h2>会議室予約</h2>
 	<form th:action="@{/reserve}" method="get">
 		日付: <input type="date" name="date" th:value="${targetDate}">
-		<input type="submit" value="表示">
+		<button class="btn" type="submit">表示</button>
 	</form>
 
-	<p th:if="${errorMessage}" th:text="${errorMessage}" style="color:red;"></p>
+	<p class="error" th:if="${errorMessage}" th:text="${errorMessage}"></p>
 
 	<table>
 		<thead>
@@ -28,14 +28,14 @@
 			<tr th:each="row : ${rows}">
 				<th th:text="${row.roomName}"></th>
 				<td th:each="cell : ${row.cells}">
-					<a th:if="${cell.available}"
+					<a class="dot-ok" th:if="${cell.available}"
 					   th:href="@{/reserve/confirm(roomId=${cell.roomId},date=${targetDate},start=${cell.start})}">○</a>
-					<span th:unless="${cell.available}">×</span>
+					<span class="dot-ng" th:unless="${cell.available}">×</span>
 				</td>
 			</tr>
 		</tbody>
 	</table>
-
-	<a th:href="@{/topPage}">メニューへ戻る</a>
+</section>
+</main>
 </body>
 </html>

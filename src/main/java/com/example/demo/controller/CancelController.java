@@ -23,6 +23,9 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
+/**
+ * キャンセル入力・確認・確定の画面遷移を扱うコントローラー。
+ */
 @Controller
 @RequiredArgsConstructor
 public class CancelController {
@@ -30,6 +33,14 @@ public class CancelController {
     private final ReservationMapper reservationMapper;
     private final RoomMapper roomMapper;
 
+    /**
+     * 指定日のキャンセル可否を、会議室×時間帯(9:00-18:00)の表形式で表示する。
+     *
+     * @param date      表示対象日。未指定時は当日。
+     * @param principal ログイン中ユーザー
+     * @param model     画面描画用モデル
+     * @return キャンセル入力画面
+     */
     @GetMapping("/cancel")
     public String showCancel(
             @RequestParam(name = "date", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
@@ -50,6 +61,7 @@ public class CancelController {
                         .findFirst()
                         .orElse(null);
 
+                // 本人予約かつ過去日でない場合のみキャンセル可能にする。
                 boolean cancellable = hit != null
                         && hit.getUserId().equals(principal.getName())
                         && !targetDate.isBefore(LocalDate.now());
@@ -65,6 +77,16 @@ public class CancelController {
         return "cancel/cancelInput";
     }
 
+    /**
+     * 選択した枠のキャンセル確認画面を表示する。
+     *
+     * @param roomId    会議室ID
+     * @param date      予約日
+     * @param start     利用開始時刻
+     * @param principal ログイン中ユーザー
+     * @param model     画面描画用モデル
+     * @return キャンセル確認画面、または入力画面(非許可時)
+     */
     @GetMapping("/cancel/confirm")
     public String confirmCancel(
             @RequestParam("roomId") String roomId,
@@ -84,6 +106,15 @@ public class CancelController {
         return "cancel/cancelConfirm";
     }
 
+    /**
+     * 予約キャンセルを確定して結果画面を表示する。
+     *
+     * @param reservationId キャンセル対象予約ID
+     * @param date          入力画面に戻るための対象日
+     * @param principal     ログイン中ユーザー
+     * @param model         画面描画用モデル
+     * @return キャンセル結果画面、または入力画面(非許可時)
+     */
     @PostMapping("/cancel/confirm")
     public String cancel(@RequestParam("reservationId") int reservationId,
             @RequestParam("date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
@@ -98,9 +129,16 @@ public class CancelController {
         }
 
         reservationMapper.deleteReservationById(reservationId);
-        return "redirect:/cancel?date=" + date;
+        model.addAttribute("resultMessage", "予約をキャンセルしました。");
+        model.addAttribute("targetDate", date);
+        return "cancel/cancelResult";
     }
 
+    /**
+     * 1時間単位(9:00-18:00)の表示用スロットを生成する。
+     *
+     * @return 時間帯リスト
+     */
     private List<LocalTime> buildTimeSlots() {
         List<LocalTime> timeSlots = new ArrayList<>();
         for (int hour = 9; hour <= 18; hour++) {
@@ -109,6 +147,9 @@ public class CancelController {
         return timeSlots;
     }
 
+    /**
+     * キャンセル表の1行分(会議室単位)を表す表示モデル。
+     */
     @Getter
     @AllArgsConstructor
     public static class CancelRow {
@@ -116,6 +157,9 @@ public class CancelController {
         private List<CancelCell> cells;
     }
 
+    /**
+     * キャンセル表の1セル分(時間帯単位)を表す表示モデル。
+     */
     @Getter
     @AllArgsConstructor
     public static class CancelCell {
