@@ -2,8 +2,7 @@
 <html xmlns="http://www.thymeleaf.org">
 <head>
 <meta charset="UTF-8">
-<title>予約確認 | 会議室で会いましょう！</title>
-<link rel="stylesheet" th:href="@{/css/app.css}">
+<title>予約確認</title>
 </head>
 <body>
 <div th:replace="~{fragments/header :: mainHeader}"></div>
@@ -20,19 +19,14 @@
 	</ul>
 
 	<form th:action="@{/reserve/confirm}" method="post" th:object="${reservation}">
-		<input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
 		<input type="hidden" th:field="*{roomId}">
 		<input type="hidden" th:field="*{date}">
 		<input type="hidden" th:field="*{start}">
 		<input type="hidden" th:field="*{end}">
 		<input type="hidden" th:field="*{userId}">
-		<button class="btn btn-primary" type="submit">確定</button>
+		<input type="submit" value="確定">
 	</form>
 
-	<div class="actions">
-		<a class="btn" th:href="@{/reserve(date=${reservation.date})}">予約入力へ戻る</a>
-	</div>
-</section>
-</main>
+	<a th:href="@{/reserve(date=${reservation.date})}">予約一覧へ戻る</a>
 </body>
 </html>

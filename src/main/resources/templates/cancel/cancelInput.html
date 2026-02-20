@@ -2,22 +2,21 @@
 <html xmlns="http://www.thymeleaf.org">
 <head>
 <meta charset="UTF-8">
-<title>キャンセル入力 | 会議室で会いましょう！</title>
-<link rel="stylesheet" th:href="@{/css/app.css}">
+<title>予約キャンセル</title>
+<style>
+	table, th, td { border: 1px solid #333; border-collapse: collapse; padding: 6px; text-align: center; }
+</style>
 </head>
 <body>
-<div th:replace="~{fragments/header :: mainHeader}"></div>
-<main class="container">
-<section class="card">
-	<h2>予約キャンセル</h2>
+	<h1>予約キャンセル</h1>
 	<p>自分の予約のみキャンセル可能です（過去日は対象外）。</p>
 
 	<form th:action="@{/cancel}" method="get">
 		日付: <input type="date" name="date" th:value="${targetDate}">
-		<button class="btn" type="submit">表示</button>
+		<input type="submit" value="表示">
 	</form>
 
-	<p class="error" th:if="${errorMessage}" th:text="${errorMessage}"></p>
+	<p th:if="${errorMessage}" th:text="${errorMessage}" style="color:red;"></p>
 
 	<table>
 		<thead>
@@ -30,14 +29,14 @@
 			<tr th:each="row : ${rows}">
 				<th th:text="${row.roomName}"></th>
 				<td th:each="cell : ${row.cells}">
-					<a class="dot-ok" th:if="${cell.cancellable}"
+					<a th:if="${cell.cancellable}"
 					   th:href="@{/cancel/confirm(roomId=${cell.roomId},date=${targetDate},start=${cell.start})}">○</a>
-					<span class="dot-ng" th:unless="${cell.cancellable}">×</span>
+					<span th:unless="${cell.cancellable}">×</span>
 				</td>
 			</tr>
 		</tbody>
 	</table>
-</section>
-</main>
+
+	<a th:href="@{/topPage}">メニューへ戻る</a>
 </body>
 </html>
