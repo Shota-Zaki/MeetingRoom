@@ -1,27 +1,44 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.example.demo.mapper.ReservationMapper">
-<select id="getAllReservations" resultType="com.example.demo.entity.Room">
-	SELECT id,roomId,date,start,end,userId FROM reservation ORDER BY id
+
+<select id="getAllReservations" resultType="com.example.demo.entity.Reservation">
+	SELECT id,roomId,date,start,end,userId FROM reservation ORDER BY date,start,roomId
 </select>
 
-<select id="getAllReservationsByDate" resultType="com.example.demo.entity.Room">
-	SELECT id,roomId,date,start,end,userId FROM reservation WHERE date = #{date} ORDER BY id
+<select id="getReservationsByDate" resultType="com.example.demo.entity.Reservation">
+	SELECT id,roomId,date,start,end,userId FROM reservation WHERE date = #{date} ORDER BY start,roomId
 </select>
 
 <select id="getReservationById" resultType="com.example.demo.entity.Reservation">
 	SELECT id,roomId,date,start,end,userId FROM reservation WHERE id =#{id}
 </select>
 
+<select id="getReservationBySlot" resultType="com.example.demo.entity.Reservation">
+	SELECT id,roomId,date,start,end,userId
+	FROM reservation
+	WHERE roomId = #{roomId}
+	  AND date = #{date}
+	  AND start = #{start}
+</select>
+
+<select id="countReservation" resultType="int">
+	SELECT COUNT(1)
+	FROM reservation
+	WHERE roomId = #{roomId}
+	  AND date = #{date}
+	  AND start = #{start}
+</select>
+
 <insert id="insertReservation" parameterType="com.example.demo.entity.Reservation">
-	INSERT INTO reservation(id,roomId,date,start,end,userId) VALUES(Null,#{roomId},#{date},#{start},#{end},#{userId})
+	INSERT INTO reservation(roomId,date,start,end,userId) VALUES(#{roomId},#{date},#{start},#{end},#{userId})
 </insert>
 
 <update id="updateReservation" parameterType="com.example.demo.entity.Reservation">
 	UPDATE reservation SET roomId=#{roomId},date=#{date},start=#{start},end=#{end},userId=#{userId} WHERE id=#{id}
 </update>
 
-<delete id="deleteReservationById" parameterType="com.example.demo.entity.Reservation">
+<delete id="deleteReservationById">
 	DELETE FROM reservation WHERE id=#{id}
 </delete>
 

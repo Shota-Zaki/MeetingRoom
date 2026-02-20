@@ -15,48 +15,49 @@ import lombok.RequiredArgsConstructor;
 @Controller
 @RequiredArgsConstructor
 public class AdminUserController {
-	private final UserMapper userMapper;
-	
-	@GetMapping("/admin/list")
-	public String index(Model model) {
-		model.addAttribute("users",userMapper.getAllUsers());
-		return "admin/userlist";
-	}
-	
-	@GetMapping("/admin/detail/{id}")
-	public String detail(@PathVariable String id,Model model) {
-		model.addAttribute("user",userMapper.getUserById(id));
-		return "admin/detail";
-	}
-	
-	@GetMapping("/admin/create")
-	public String create(@ModelAttribute User user) {
-		return "admin/create";
-	}
-	
-	@PostMapping("/admin/create")
-	public String create(@ModelAttribute User user,Model model) {
-		userMapper.insertUser(user);
-		return "admin/useradd";
-	}
-	
-	@GetMapping("/admin/update/{id}")
-	public String update(@PathVariable String id,Model model) {
-		model.addAttribute("user",userMapper.getUserById(id));
-		return "admin/userupdate";
-	}
-	
-	@PostMapping("/admin/update")
-	public String update(@ModelAttribute User user,Model model) {
-		userMapper.updateUser(user);
-		model.addAttribute("users",userMapper.getAllUsers());
-		return "admin/userlist";
-	}
-	
-	@GetMapping("/admin/delete/{id}")
-	public String delete(@PathVariable String id,Model model) {
-		userMapper.deleteUserById(id);
-		model.addAttribute("users",userMapper.getAllUsers());
-		return "user/userlist";
-	}
+    private final UserMapper userMapper;
+
+    @GetMapping("/admin/list")
+    public String index(Model model) {
+        model.addAttribute("users", userMapper.getAllUsers());
+        return "admin/userlist";
+    }
+
+    @GetMapping("/admin/detail/{id}")
+    public String detail(@PathVariable String id, Model model) {
+        model.addAttribute("user", userMapper.getUserById(id));
+        return "admin/detail";
+    }
+
+    @GetMapping("/admin/create")
+    public String create(@ModelAttribute User user) {
+        return "admin/useradd";
+    }
+
+    @PostMapping("/admin/create")
+    public String create(@ModelAttribute User user, Model model) {
+        userMapper.insertUser(user);
+        model.addAttribute("users", userMapper.getAllUsers());
+        return "admin/userlist";
+    }
+
+    @GetMapping("/admin/update/{id}")
+    public String update(@PathVariable String id, Model model) {
+        model.addAttribute("user", userMapper.getUserById(id));
+        return "admin/userupdate";
+    }
+
+    @PostMapping("/admin/update")
+    public String update(@ModelAttribute User user, Model model) {
+        userMapper.updateUser(user);
+        model.addAttribute("users", userMapper.getAllUsers());
+        return "admin/userlist";
+    }
+
+    @GetMapping("/admin/delete/{id}")
+    public String delete(@PathVariable String id, Model model) {
+        userMapper.deleteUserById(id);
+        model.addAttribute("users", userMapper.getAllUsers());
+        return "admin/userlist";
+    }
 }

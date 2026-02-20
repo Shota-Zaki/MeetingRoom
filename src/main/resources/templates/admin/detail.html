@@ -1,18 +1,17 @@
 <!DOCTYPE html>
-<html>
+<html xmlns="http://www.thymeleaf.org">
 <head>
 <meta charset="UTF-8">
-<title>Insert title here</title>
+<title>利用者詳細</title>
 </head>
 <body>
 	<h1>利用者詳細</h1>
 	<ul th:object="${user}">
 		<li>ID:[[*{id}]]</li>
 		<li>氏名:[[*{name}]]</li>
-		<li>ログインID:[[*{loginId}]]</li>
 		<li>パスワード:[[*{password}]]</li>
+		<li>住所:[[*{address}]]</li>
 	</ul>
-	<a href="/">戻る</a>
-
+	<a th:href="@{/admin/list}">利用者一覧へ戻る</a>
 </body>
 </html>

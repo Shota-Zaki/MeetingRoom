@@ -2,7 +2,7 @@
 <html xmlns="http://www.thymeleaf.org">
 <head>
 <meta charset="UTF-8">
-<title>Insert title here</title>
+<title>管理者ページ</title>
 </head>
 <body>
 	<h1>管理者ページ</h1>
@@ -10,8 +10,12 @@
 	<a th:href="@{/admin/create}">ユーザー新規登録</a><br>
 	<a th:href="@{/admin/roomlist}">会議室一覧</a><br>
 	<a th:href="@{/admin/roomcreate}">会議室新規登録</a><br>
-	<a th:href="@{/admin/reservelist}">予約一覧</a><br>
-	<a th:href="@{/topPage}">メニューに戻る</a><br>
 
+	<form th:action="@{/admin/reservelist}" method="post" style="display:inline;">
+		<input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+		<input type="submit" value="予約一覧">
+	</form><br>
+
+	<a th:href="@{/topPage}">メニューに戻る</a><br>
 </body>
 </html>
