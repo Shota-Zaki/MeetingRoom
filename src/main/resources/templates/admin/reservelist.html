@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html xmlns="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>予約一覧 | 会議室で会いましょう！</title>
+<link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body>
+<div th:replace="~{fragments/header :: mainHeader}"></div>
+<main class="container"><section class="card">
+	<h2>予約一覧</h2>
+	<table>
+		<thead><tr><th>予約ID</th><th>会議室ID</th><th>利用日</th><th>開始</th><th>終了</th><th>利用者ID</th></tr></thead>
+		<tbody>
+			<tr th:each="reservation : ${reservations}">
+				<td th:text="${reservation.id}"></td><td th:text="${reservation.roomId}"></td><td th:text="${reservation.date}"></td>
+				<td th:text="${reservation.start}"></td><td th:text="${reservation.end}"></td><td th:text="${reservation.userId}"></td>
+			</tr>
+		</tbody>
+	</table>
+</section></main>
+</body>
+</html>

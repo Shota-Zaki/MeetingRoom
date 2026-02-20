@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<body>
+<header class="site-header" th:fragment="mainHeader">
+  <!-- 共通ヘッダー: 全画面で読み込むタイトル + グローバルナビゲーション -->
+  <h1 class="site-title">会議室予約システム(仮)</h1>
+  <nav class="nav">
+    <a th:href="@{/topPage}">メニュー</a>
+    <a th:href="@{/reserve}">予約</a>
+    <a th:href="@{/cancel}">キャンセル</a>
+    <a sec:authorize="hasRole('ADMIN')" th:href="@{/admin/top}">管理者</a>
+  </nav>
+</header>
+</body>
+</html>
