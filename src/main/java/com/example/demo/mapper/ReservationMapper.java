@@ -1,5 +1,6 @@
 package com.example.demo.mapper;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
@@ -10,6 +11,8 @@ import com.example.demo.entity.Reservation;
 public interface ReservationMapper {
 	List<Reservation> getAllReservations();
 	
+	List<Reservation> getAllReservationsByDate(LocalDate date);
+	
 	Reservation getReservationById(int id);
 	
 	void insertReservation(Reservation reserve);
@@ -17,4 +20,6 @@ public interface ReservationMapper {
 	void updateReservation(Reservation reserve);
 	
 	void deleteReservationById(int id);
+
+	
 }

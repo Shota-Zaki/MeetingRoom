@@ -10,13 +10,13 @@ import com.example.demo.entity.Room;
 public interface RoomMapper {
 	List<Room> getAllRooms();
 	
-	Room getRoomById(int id);
+	Room getRoomById(String id);
 	
 	void insertRoom(Room room);
 	
 	void updateRoom(Room room);
 	
-	void deleteRoomById(int id);
+	void deleteRoomById(String id);
 
 	List<Room> selectAll();
 }

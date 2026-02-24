@@ -6,11 +6,9 @@ import lombok.Data;
 
 @Data
 public class ReservationForm {
-	int roomId;
+	String roomId;
 
 	String start;
-
-	String end;
 
 	LocalDate date;
 }
