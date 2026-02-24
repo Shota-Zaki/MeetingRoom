@@ -1,7 +1,12 @@
 -- DB作成
-DROP DATABASE IF EXISTS meetingroom;
-CREATE DATABASE meetingroom;
-USE meetingroom;
+-- DROP DATABASE IF EXISTS meetingroom; 自動化のため無効化
+-- CREATE DATABASE meetingroom;
+-- USE meetingroom;
+
+-- 開発用に起動時に毎回テーブルを破棄
+DROP TABLE IF EXISTS reservation;
+DROP TABLE IF EXISTS room;
+DROP TABLE IF EXISTS users;
 
 -- userテーブル
 CREATE TABLE users (
@@ -37,6 +42,6 @@ FOREIGN KEY (userId) REFERENCES users(id),
 UNIQUE (roomId,date,start)
 );
 
-GRANT SELECT ON meetingroom.room TO 'user'@'localhost';
-GRANT SELECT ON meetingroom.users TO 'user'@'localhost';
-GRANT SELECT,INSERT,DELETE ON meetingroom.reservation TO 'user'@'localhost';
+-- GRANT SELECT ON meetingroom.room TO 'user'@'localhost';
+-- GRANT SELECT ON meetingroom.users TO 'user'@'localhost';
+-- GRANT SELECT,INSERT,DELETE ON meetingroom.reservation TO 'user'@'localhost';

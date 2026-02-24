@@ -16,6 +16,7 @@ public class SecurityConfig {
         http.authorizeHttpRequests(authz -> authz // HTTPリクエストに対するセキュリティ設定
                 .requestMatchers("/css/**", "/js/**", "/img/**").permitAll() // 静的なものは許可
                 .requestMatchers("/", "/login", "/toInsert", "/insert").permitAll() // /login へのアクセスは誰でもOK
+                .requestMatchers("/admin/**").hasRole("ADMIN") // 管理者ページには管理者権限持ってるユーザーのみに
                 .anyRequest().authenticated() // その他はログイン必須
         ).formLogin(login -> login // フォームベースのログイン設定
                 .loginPage("/login") // ログインページのURLを指定。GET /login をログイン画面として使う
@@ -24,7 +25,7 @@ public class SecurityConfig {
                 .defaultSuccessUrl("/topPage", true) // ログイン成功したらトップページへ移動
                 
         ).logout(logout -> logout
-                .logoutUrl("/logout") //POSTまたはGET /logout でログアウト。
+                .logoutUrl("/logout") // /logout でログアウト。
                 .logoutSuccessUrl("/") //ログアウト成功でトップページへ
                 .invalidateHttpSession(true) //ログアウト時にセッションを完全破棄
         );
