@@ -3,9 +3,6 @@ package com.example.demo.controller;
 import java.security.Principal;
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
@@ -15,31 +12,27 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.example.demo.entity.Reservation;
-import com.example.demo.entity.Room;
-import com.example.demo.entity.User;
-import com.example.demo.mapper.ReservationMapper;
-import com.example.demo.mapper.RoomMapper;
-import com.example.demo.mapper.UserMapper;
+import com.example.demo.service.ReservationService;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 /**
- * 予約入力・確認・確定の画面遷移を扱うコントローラー。
+ * 予約画面のリクエスト/レスポンスを担当するコントローラー。
+ * <p>
+ * 業務ロジックやMapper操作は {@link ReservationService} へ委譲する。
  */
 @Controller
 @RequiredArgsConstructor
 public class ReservationController {
 
-    private final ReservationMapper reservationMapper;
-    private final RoomMapper roomMapper;
-    private final UserMapper userMapper;
+    private final ReservationService reservationService;
 
     /**
-     * 指定日の空き状況を、会議室×時間帯(9:00-18:00)の表形式で表示する。
+     * 予約入力画面を表示する。
      *
-     * @param date  表示対象日。未指定時は当日。
+     * @param date  表示対象日(未指定時は当日)
      * @param model 画面描画用モデル
      * @return 予約入力画面
      */
@@ -48,31 +41,16 @@ public class ReservationController {
             @RequestParam(name = "date", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
             Model model) {
         LocalDate targetDate = (date == null) ? LocalDate.now() : date;
+        ReservationService.ReserveGridData grid = reservationService.buildReserveGrid(targetDate);
 
-        List<Room> rooms = roomMapper.getAllRooms();
-        List<LocalTime> timeSlots = buildTimeSlots();
-        List<Reservation> reservations = reservationMapper.getReservationsByDate(targetDate);
-
-        List<ReserveRow> rows = new ArrayList<>();
-        for (Room room : rooms) {
-            List<ReserveCell> cells = new ArrayList<>();
-            for (LocalTime slot : timeSlots) {
-                // 同じ会議室・同じ開始時刻の予約が存在するかを判定する。
-                boolean reserved = reservations.stream()
-                        .anyMatch(r -> r.getRoomId().equals(room.getId()) && slot.equals(r.getStart()));
-                cells.add(new ReserveCell(room.getId(), slot.format(DateTimeFormatter.ofPattern("HH:mm")), !reserved));
-            }
-            rows.add(new ReserveRow(room.getName(), room.getId(), cells));
-        }
-
-        model.addAttribute("targetDate", targetDate);
-        model.addAttribute("timeSlots", timeSlots.stream().map(t -> t.format(DateTimeFormatter.ofPattern("H:mm"))).toList());
-        model.addAttribute("rows", rows);
+        model.addAttribute("targetDate", grid.getTargetDate());
+        model.addAttribute("timeSlots", grid.getTimeSlots());
+        model.addAttribute("rows", grid.getRows());
         return "reserve/reserveInput";
     }
 
     /**
-     * 選択した空き枠の予約確認画面を表示する。
+     * 予約確認画面を表示する。
      *
      * @param roomId    会議室ID
      * @param date      予約日
@@ -88,79 +66,37 @@ public class ReservationController {
             @RequestParam("start") @DateTimeFormat(pattern = "H:mm") LocalTime start,
             Principal principal,
             Model model) {
-        if (reservationMapper.countReservation(roomId, date, start) > 0) {
+        ReservationService.ReserveConfirmData confirmData =
+                reservationService.buildReserveConfirm(roomId, date, start, principal.getName());
+
+        if (confirmData == null) {
             model.addAttribute("errorMessage", "選択した時間帯はすでに予約済みです。");
             return showReserve(date, model);
         }
 
-        Room room = roomMapper.getRoomById(roomId);
-        User user = userMapper.getUserById(principal.getName());
-
-        Reservation reservation = new Reservation();
-        reservation.setRoomId(roomId);
-        reservation.setDate(date);
-        reservation.setStart(start);
-        reservation.setEnd(start.plusHours(1));
-        reservation.setUserId(principal.getName());
-
-        model.addAttribute("reservation", reservation);
-        model.addAttribute("room", room);
-        model.addAttribute("user", user);
+        model.addAttribute("reservation", confirmData.getReservation());
+        model.addAttribute("room", confirmData.getRoom());
+        model.addAttribute("user", confirmData.getUser());
         return "reserve/reserve";
     }
 
     /**
-     * 予約を確定して結果画面を表示する。
+     * 予約確定を実行し、結果画面を表示する。
      *
-     * @param reservation 確定対象の予約
+     * @param reservation 予約情報
      * @param model       画面描画用モデル
      * @return 予約結果画面、または入力画面(重複時)
      */
     @PostMapping("/reserve/confirm")
     public String createReservation(Reservation reservation, Model model) {
-        if (reservationMapper.countReservation(reservation.getRoomId(), reservation.getDate(), reservation.getStart()) > 0) {
+        boolean created = reservationService.createReservation(reservation);
+        if (!created) {
             model.addAttribute("errorMessage", "選択した時間帯はすでに予約済みです。");
             return showReserve(reservation.getDate(), model);
         }
 
-        reservationMapper.insertReservation(reservation);
         model.addAttribute("resultMessage", "予約が完了しました！");
         model.addAttribute("targetDate", reservation.getDate());
         return "reserve/reserveResult";
-    }
-
-    /**
-     * 1時間単位(9:00-18:00)の表示用スロットを生成する。
-     *
-     * @return 時間帯リスト
-     */
-    private List<LocalTime> buildTimeSlots() {
-        List<LocalTime> timeSlots = new ArrayList<>();
-        for (int hour = 9; hour <= 18; hour++) {
-            timeSlots.add(LocalTime.of(hour, 0));
-        }
-        return timeSlots;
-    }
-
-    /**
-     * 予約表の1行分(会議室単位)を表す表示モデル。
-     */
-    @Getter
-    @AllArgsConstructor
-    public static class ReserveRow {
-        private String roomName;
-        private String roomId;
-        private List<ReserveCell> cells;
-    }
-
-    /**
-     * 予約表の1セル分(時間帯単位)を表す表示モデル。
-     */
-    @Getter
-    @AllArgsConstructor
-    public static class ReserveCell {
-        private String roomId;
-        private String start;
-        private boolean available;
     }
 }
