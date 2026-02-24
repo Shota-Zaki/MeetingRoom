@@ -3,6 +3,9 @@ package com.example.demo.controller;
 import java.security.Principal;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
@@ -11,25 +14,29 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.example.demo.service.ReservationService;
+import com.example.demo.entity.Reservation;
+import com.example.demo.entity.Room;
+import com.example.demo.mapper.ReservationMapper;
+import com.example.demo.mapper.RoomMapper;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 /**
- * キャンセル画面のリクエスト/レスポンスを担当するコントローラー。
- * <p>
- * 業務ロジックやMapper操作は {@link ReservationService} へ委譲する。
+ * キャンセル入力・確認・確定の画面遷移を扱うコントローラー。
  */
 @Controller
 @RequiredArgsConstructor
 public class CancelController {
 
-    private final ReservationService reservationService;
+    private final ReservationMapper reservationMapper;
+    private final RoomMapper roomMapper;
 
     /**
-     * キャンセル入力画面を表示する。
+     * 指定日のキャンセル可否を、会議室×時間帯(9:00-18:00)の表形式で表示する。
      *
-     * @param date      表示対象日(未指定時は当日)
+     * @param date      表示対象日。未指定時は当日。
      * @param principal ログイン中ユーザー
      * @param model     画面描画用モデル
      * @return キャンセル入力画面
@@ -40,16 +47,38 @@ public class CancelController {
             Principal principal,
             Model model) {
         LocalDate targetDate = (date == null) ? LocalDate.now() : date;
-        ReservationService.CancelGridData grid = reservationService.buildCancelGrid(targetDate, principal.getName());
 
-        model.addAttribute("targetDate", grid.getTargetDate());
-        model.addAttribute("timeSlots", grid.getTimeSlots());
-        model.addAttribute("rows", grid.getRows());
+        List<Room> rooms = roomMapper.getAllRooms();
+        List<LocalTime> timeSlots = buildTimeSlots();
+        List<Reservation> reservations = reservationMapper.getReservationsByDate(targetDate);
+
+        List<CancelRow> rows = new ArrayList<>();
+        for (Room room : rooms) {
+            List<CancelCell> cells = new ArrayList<>();
+            for (LocalTime slot : timeSlots) {
+                Reservation hit = reservations.stream()
+                        .filter(r -> r.getRoomId().equals(room.getId()) && slot.equals(r.getStart()))
+                        .findFirst()
+                        .orElse(null);
+
+                // 本人予約かつ過去日でない場合のみキャンセル可能にする。
+                boolean cancellable = hit != null
+                        && hit.getUserId().equals(principal.getName())
+                        && !targetDate.isBefore(LocalDate.now());
+
+                cells.add(new CancelCell(room.getId(), slot.format(DateTimeFormatter.ofPattern("HH:mm")), cancellable));
+            }
+            rows.add(new CancelRow(room.getName(), cells));
+        }
+
+        model.addAttribute("targetDate", targetDate);
+        model.addAttribute("timeSlots", timeSlots.stream().map(t -> t.format(DateTimeFormatter.ofPattern("H:mm"))).toList());
+        model.addAttribute("rows", rows);
         return "cancel/cancelInput";
     }
 
     /**
-     * キャンセル確認画面を表示する。
+     * 選択した枠のキャンセル確認画面を表示する。
      *
      * @param roomId    会議室ID
      * @param date      予約日
@@ -65,23 +94,22 @@ public class CancelController {
             @RequestParam("start") @DateTimeFormat(pattern = "H:mm") LocalTime start,
             Principal principal,
             Model model) {
-        ReservationService.CancelConfirmData confirmData =
-                reservationService.buildCancelConfirm(roomId, date, start, principal.getName());
-
-        if (confirmData == null) {
+        Reservation reservation = reservationMapper.getReservationBySlot(roomId, date, start);
+        if (reservation == null || !reservation.getUserId().equals(principal.getName()) || date.isBefore(LocalDate.now())) {
             model.addAttribute("errorMessage", "この予約はキャンセルできません。");
             return showCancel(date, principal, model);
         }
 
-        model.addAttribute("reservation", confirmData.getReservation());
-        model.addAttribute("room", confirmData.getRoom());
+        Room room = roomMapper.getRoomById(roomId);
+        model.addAttribute("reservation", reservation);
+        model.addAttribute("room", room);
         return "cancel/cancelConfirm";
     }
 
     /**
-     * キャンセル確定を実行し、結果画面を表示する。
+     * 予約キャンセルを確定して結果画面を表示する。
      *
-     * @param reservationId 対象予約ID
+     * @param reservationId キャンセル対象予約ID
      * @param date          入力画面に戻るための対象日
      * @param principal     ログイン中ユーザー
      * @param model         画面描画用モデル
@@ -92,14 +120,51 @@ public class CancelController {
             @RequestParam("date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
             Principal principal,
             Model model) {
-        boolean canceled = reservationService.cancelReservation(reservationId, principal.getName());
-        if (!canceled) {
+        Reservation reservation = reservationMapper.getReservationById(reservationId);
+        if (reservation == null
+                || !reservation.getUserId().equals(principal.getName())
+                || reservation.getDate().isBefore(LocalDate.now())) {
             model.addAttribute("errorMessage", "この予約はキャンセルできません。");
             return showCancel(date, principal, model);
         }
 
+        reservationMapper.deleteReservationById(reservationId);
         model.addAttribute("resultMessage", "予約をキャンセルしました。");
         model.addAttribute("targetDate", date);
         return "cancel/cancelResult";
+    }
+
+    /**
+     * 1時間単位(9:00-18:00)の表示用スロットを生成する。
+     *
+     * @return 時間帯リスト
+     */
+    private List<LocalTime> buildTimeSlots() {
+        List<LocalTime> timeSlots = new ArrayList<>();
+        for (int hour = 9; hour <= 18; hour++) {
+            timeSlots.add(LocalTime.of(hour, 0));
+        }
+        return timeSlots;
+    }
+
+    /**
+     * キャンセル表の1行分(会議室単位)を表す表示モデル。
+     */
+    @Getter
+    @AllArgsConstructor
+    public static class CancelRow {
+        private String roomName;
+        private List<CancelCell> cells;
+    }
+
+    /**
+     * キャンセル表の1セル分(時間帯単位)を表す表示モデル。
+     */
+    @Getter
+    @AllArgsConstructor
+    public static class CancelCell {
+        private String roomId;
+        private String start;
+        private boolean cancellable;
     }
 }
