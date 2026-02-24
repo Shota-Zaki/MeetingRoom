@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.example.demo.entity.Reservation;
 import com.example.demo.service.ReservationService;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 /**
