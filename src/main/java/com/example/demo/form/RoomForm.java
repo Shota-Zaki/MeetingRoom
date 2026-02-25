@@ -4,8 +4,15 @@ import lombok.Data;
 
 @Data
 public class RoomForm {
-	int id;
-
+	
+	/*
+	 * 部屋番号
+	 * */
+	String id;
+	
+	/*
+	 * 会議室名
+	 * */
 	String name;
 
 }

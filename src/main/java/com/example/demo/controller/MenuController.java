@@ -11,8 +11,4 @@ public class MenuController {
         return "login/menu";
     }
     
-    @GetMapping("admin/top")
-    public String admin() {
-    	return "admin/admin";
-    }
 }

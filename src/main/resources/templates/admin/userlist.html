@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html xmlns="http://www.thymeleaf.org">
 <head>
 <meta charset="UTF-8">
 <title>Insert title here</title>
@@ -20,11 +20,12 @@
 			<tr th:each="user:${users}">
 				<td th:text="${user.id}"></td>
 				<td th:text="${user.name}"></td>
-				<td><a th:href="|/admin/detail/${user.id}|">詳細</a></td>
-				<td><a th:href="|/admin//update/${user.id}|">更新</a></td>
-				<td><a th:href="|/admin//delete/${user.id}|">削除</a></td>
+				<td><a th:href="@{/admin/detail/{id}(id=${user.id})}">詳細</a></td>
+				<td><a th:href="@{/admin/update/{id}(id=${user.id})}">更新</a></td>
+				<td><a th:href="@{/admin/delete/{id}(id=${user.id})}">削除</a></td>
 			</tr>
 		</tbody>
-
+	</table>
+	<a th:href="@{/topPage}">戻る</a><br>
 </body>
 </html>

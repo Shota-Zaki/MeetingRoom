@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+	<form th:action="@{/admin/create}" method="post" th:object="${RoomForm}">
+		会議室番号:<input type="text" th:field="*{id}">
+		会議室名<input type="text" th:field="*{name}">
+		<input type="submit" value="登録">
+	</form>
+	<a th:href="@{/admin/top}">戻る</a>
+</body>
+</html>

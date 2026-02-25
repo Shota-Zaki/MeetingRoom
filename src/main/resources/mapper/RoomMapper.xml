@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.example.demo.mapper.RoomMapper">
 <select id="getAllRooms" resultType="com.example.demo.entity.Room">
-	SELECT id,loginId,password,name FROM room ORDER BY id
+	SELECT id,name FROM room ORDER BY id
 </select>
  <select id="selectAll" resultType="com.example.demo.entity.Room">
     SELECT id, name FROM room ORDER BY id

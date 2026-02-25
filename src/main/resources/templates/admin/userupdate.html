@@ -5,17 +5,18 @@
 <title>Insert title here</title>
 </head>
 <body>
-	<form th:action="@{/admin/update}" method="post" th:object="${AdminUserForm}">
-		ユーザーID:<input type="text" th:field="*{id}">
-		名前<input type="text" th:field="*{name}">
-		パスワード<input type="password" th:field="*{password}">
-		住所<input type="text" th:field="*{address}">
+	<form th:action="@{/admin/update}" method="post" th:object="${user}">
+		ユーザーID:<input type="text" th:field="*{id}"><br>
+		名前<input type="text" th:field="*{name}"><br>
+		パスワード<input type="password" th:field="*{password}"><br>
+		住所<input type="text" th:field="*{address}"><br>
 		<select th:field="*{adminflag}">
 			<option value="0">一般</label>
 			<option value="1">管理者</label>
 		</select>
-		
-	</form>
 
+	</form>
+	<a th:href="@{/admin/list}">戻る</a>
+	
 </body>
 </html>
