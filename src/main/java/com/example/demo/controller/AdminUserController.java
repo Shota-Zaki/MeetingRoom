@@ -10,10 +10,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import com.example.demo.entity.Reservation;
-import com.example.demo.entity.Room;
-import com.example.demo.entity.User;
+import com.example.demo.form.UserForm;
 import com.example.demo.service.ReservationService;
-import com.example.demo.service.RoomService;
 import com.example.demo.service.UserService;
 
 import lombok.RequiredArgsConstructor;
@@ -23,7 +21,6 @@ import lombok.RequiredArgsConstructor;
 public class AdminUserController {
 	private final UserService userService;
 	private final ReservationService reservationService;
-	private final RoomService roomService;
 	
 	@GetMapping("admin/top")
     public String admin() {
@@ -42,14 +39,14 @@ public class AdminUserController {
 		return "admin/detail";
 	}
 	
-	@GetMapping("/admin/create")
-	public String create(@ModelAttribute User user) {
+	@GetMapping("/admin/useradd")
+	public String create(@ModelAttribute UserForm userForm) {
 		return "admin/useradd";
 	}
 	
 	@PostMapping("/admin/create")
-	public String create(@ModelAttribute User user,Model model) {
-		userService.addUser(user);
+	public String create(@ModelAttribute UserForm userForm,Model model) {
+		userService.addUser(userForm);
 		return "admin/userlist";
 	}
 	
@@ -60,49 +57,26 @@ public class AdminUserController {
 	}
 	
 	@PostMapping("/admin/update")
-	public String update(@ModelAttribute User user,Model model) {
-		userService.updateUser(user);
+	public String update(@ModelAttribute UserForm userForm,Model model) {
+		userService.updateUser(userForm);
 		model.addAttribute("users",userService.getAllUsers());
 		return "admin/userlist";
 	}
 	
-	/*
+	/**
 	 * 削除して前の画面にもどす。
-	 * 
 	 */
 	@GetMapping("/admin/delete/{id}")
 	public String delete(@PathVariable String id,Model model) {
 		userService.deleteUser(id);
 		model.addAttribute("users",userService.getAllUsers());
-		return "user/userlist";
+		return "admin/userlist";
 	}
 	
-	// -----------------会議室管理関連--------------------
-	
-	/*
-	 * 会議室リスト表示用。
-	 * 完成次第でAdminRoomControllerに移動予定。
-	 */
-	@GetMapping("/admin/roomlist")
-	public String roomList(Model model) {
-	    List<Room> rooms = roomService.getAllRooms();
-	    model.addAttribute("rooms", rooms);
-	    return "admin/roomlist"; 
-	}
-	
-	/*
-	 * 会議室追加
-	 * 完成次第でAdminRoomControllerに移動予定。
-	 */
-	@GetMapping("/admin/roomlist")
-	public String createRoom(@ModelAttribute Room room) {
-		roomService.addRoom(room);
-	    return "admin/roomlist"; 
-	}
 	
 	//---------------予約管理関連--------------------
 	
-	/*
+	/**
 	 * 予約リスト表示用。
 	 * 完成次第でAdminReserveControllerに移動予定。
 	 */

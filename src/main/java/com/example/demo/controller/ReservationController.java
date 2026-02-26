@@ -24,8 +24,8 @@ public class ReservationController {
 	}
 	
 	@PostMapping("/reserve")
-	public String reserve(Reservation reserve,Model model) {
-		model.addAttribute("reservation", reserve);
+	public String reserve(Reservation reservation,Model model) {
+		model.addAttribute("reservation", reservation);
 		return "reserve/reserve";
 	}
 	
@@ -36,8 +36,8 @@ public class ReservationController {
 	}
 	
 	@PostMapping("/cancel")
-	public String cancel(Reservation reserve,Model model) {
-		model.addAttribute("reservation", reserve);
+	public String cancel(Reservation reservation,Model model) {
+		model.addAttribute("reservation", reservation);
 		return "cancel/cancelInput";
 	}
 }

@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+	<h1>会議室詳細</h1>
+	<ul th:object="${room}">
+		<li>会議室ID:[[*{id}]]</li>
+		<li>会議室名:[[*{name}]]</li>
+		
+	</ul>
+	<a th:href="@{/admin/list}">戻る</a>
+
+</body>
+</html>

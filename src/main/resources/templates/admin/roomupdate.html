@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html xmlns="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+	<form th:action="@{/admin/update}" method="post" th:object="${room}">
+		会議室番号:<input type="text" th:field="*{id}">
+		会議室名:<input type="text" th:field="*{name}">
+		<input type="submit" value="登録">
+	</form>
+	<a th:href="@{/admin/list}">戻る</a>
+	
+</body>
+</html>

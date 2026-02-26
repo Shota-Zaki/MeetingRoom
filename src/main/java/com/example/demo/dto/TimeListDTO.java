@@ -10,20 +10,20 @@ import lombok.Data;
 @Data
 public class TimeListDTO {
 	
-	/*
+	/**
 	 * 開始時間
-	 * */
+	 */
 	private LocalTime start;
 	
-	/*
+	/**
 	 * 終了時間
-	 * */
+	 */
 	private LocalTime end;
 	
 	
-	/*
+	/**
 	 * 予約の有無
-	 * */
+	 */
 	private boolean reserve;
 	
 	

@@ -6,6 +6,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.example.demo.entity.User;
+import com.example.demo.form.UserForm;
 import com.example.demo.mapper.UserMapper;
 
 import lombok.RequiredArgsConstructor;
@@ -16,42 +17,50 @@ public class UserService {
 	// 各クラスをDI
 	private final UserMapper userMapper;
 	private final PasswordEncoder passwordEncoder;
-	
-	
-	
-	
+
 	//---------------管理者機能------------------------
-	
+
 	/*
 	 * ユーザーの新規登録
 	 * */
-	public void addUser(User user) {
+	public void addUser(UserForm form) {
 		//パスワードをハッシュ化してUserフィールドにセット
-		user.setPassword(passwordEncoder.encode(user.getPassword()));
+		User user = new User();
+		
+		user.setId(form.getId());
+		user.setName(form.getName());
+		user.setPassword(passwordEncoder.encode(form.getPassword()));
+		user.setAddress(form.getAddress());
+		user.setAdminflag(form.getAdminflag());
 		userMapper.insertUser(user);
 	}
-	
+
 	public List<User> getAllUsers() {
 		return userMapper.getAllUsers();
 	}
-	
+
 	/*
 	 * ユーザーIDからユーザー情報を取得して返す。
 	 * */
 	public User getUserById(String id) {
 		return userMapper.getUserById(id);
 	}
-	
-	
+
 	/*
 	 * ユーザー情報の更新
 	 * */
-	public void updateUser(User user) {
+	public void updateUser(UserForm form) {
 		// パスワードをハッシュ化してUserフィールドにセット
-	    user.setPassword(passwordEncoder.encode(user.getPassword()));
-	    userMapper.updateUser(user);
+		User user = new User();
+		
+		user.setId(form.getId());
+		user.setName(form.getName());
+		user.setPassword(passwordEncoder.encode(form.getPassword()));
+		user.setAddress(form.getAddress());
+		user.setAdminflag(form.getAdminflag());
+		userMapper.updateUser(user);
 	}
-	
+
 	/*
 	 * ユーザー情報の削除(論理削除)
 	 * */

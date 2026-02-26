@@ -10,6 +10,9 @@
 			<tr>
 				<th>部屋番号</th>
 				<th>部屋名</th>
+				<th></th>
+				<th></th>
+				<th></th>
 			</tr>
 		</thead>
 		
@@ -17,6 +20,9 @@
 			<tr th:each="room:${rooms}">
 				<td th:text="${room.id}"></td>
 				<td th:text="${room.name}"></td>
+				<td><a th:href="@{/admin/roomdetail/{id}(id=${room.id})}">詳細</a></td>
+				<td><a th:href="@{/admin/roomupdate/{id}(id=${room.id})}">更新</a></td>
+				<td><a th:href="@{/admin/roomdelete/{id}(id=${room.id})}">削除</a></td>
 			</tr>
 
 		</tbody>

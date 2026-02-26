@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 import com.example.demo.entity.Room;
+import com.example.demo.form.RoomForm;
 import com.example.demo.mapper.RoomMapper;
 
 import lombok.RequiredArgsConstructor;
@@ -19,9 +20,26 @@ public class RoomService {
 		 return roomMapper.getAllRooms();
 	}
 	
-	public void addRoom(Room room) {
+	public Room getRoomById(String id) {
+		return roomMapper.getRoomById(id);
+	}
+	
+	public void addRoom(RoomForm form) {
+		Room room = new Room();
+		room.setId(form.getId());
+		room.setName(form.getName());
 		roomMapper.insertRoom(room);
 	}
 	
-	//public void 
+	public void updateRoom(RoomForm form) {
+		// パスワードをハッシュ化してUserフィールドにセット
+		Room room = new Room();
+		room.setId(form.getId());
+		room.setName(form.getName());
+	    roomMapper.updateRoom(room);
+	}
+	
+	public void deleteRoom(String id) {
+		roomMapper.deleteRoomById(id);
+	}
 }
