@@ -9,17 +9,17 @@ import com.example.demo.entity.Reservation;
 
 @Mapper
 public interface ReservationMapper {
+	
 	List<Reservation> getAllReservations();
 	
 	List<Reservation> getAllReservationsByDate(LocalDate date);
 	
 	Reservation getReservationById(int id);
 	
-	void insertReservation(Reservation reserve);
+	void insertReservation(Reservation reservation);
 	
-	void updateReservation(Reservation reserve);
+	void updateReservation(Reservation reservation);
 	
 	void deleteReservationById(int id);
 
-	
 }

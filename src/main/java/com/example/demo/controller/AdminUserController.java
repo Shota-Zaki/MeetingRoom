@@ -76,10 +76,10 @@ public class AdminUserController {
 	
 	//---------------予約管理関連--------------------
 	
-	/**
+	/*
 	 * 予約リスト表示用。
 	 * 完成次第でAdminReserveControllerに移動予定。
-	 */
+	 **/
 	@GetMapping("/admin/reservelist")
 	public String reserveList(Model model) {
 	    List<Reservation> reserves = reservationService.getAllReservations();

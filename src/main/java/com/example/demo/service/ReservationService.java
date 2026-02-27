@@ -1,5 +1,6 @@
 package com.example.demo.service;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
@@ -17,20 +18,20 @@ public class ReservationService {
 	 private final ReservationMapper reservationMapper;
 	 
 	 
-//	 public List<Reserve> findReservationByDate(LocalDate date){
-//		 List<Reservation> reservations = reservationMapper.getAllReservationsByDate(date);
-//	 } 
-
-	public void reserve() {
-		 
+	 public List<Reservation> findReservationByDate(LocalDate date){
+		return reservationMapper.getAllReservationsByDate(date);
+	 } 
+	 
+	public void reserve(Reservation reservation) {
+		 reservationMapper.insertReservation(reservation);
 	 }
 	
-	//---------------管理者機能------------------------
-	
 	/*
-	 * ユーザー情報の取得
+	 * すべての予約情報の取得
 	* */
 	public List<Reservation> getAllReservations(){
 		return reservationMapper.getAllReservations();
 	}
+	
+	
 }
