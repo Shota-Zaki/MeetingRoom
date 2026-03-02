@@ -32,7 +32,6 @@ public class RoomService {
 	}
 	
 	public void updateRoom(RoomForm form) {
-		// パスワードをハッシュ化してUserフィールドにセット
 		Room room = new Room();
 		room.setId(form.getId());
 		room.setName(form.getName());
@@ -41,5 +40,10 @@ public class RoomService {
 	
 	public void deleteRoom(String id) {
 		roomMapper.deleteRoomById(id);
+	}
+
+	public int roomIndex(String roomId) {
+		// TODO 自動生成されたメソッド・スタブ
+		return 0;
 	}
 }

@@ -33,5 +33,4 @@ public class ReservationService {
 		return reservationMapper.getAllReservations();
 	}
 	
-	
 }
